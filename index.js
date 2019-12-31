@@ -7,10 +7,10 @@ const http = require('http')
 module.exports = function (homebridge) {
   Service = homebridge.hap.Service
   Characteristic = homebridge.hap.Characteristic
-  homebridge.registerAccessory('homebridge-web-valve', 'WebValve', WebValve)
+  homebridge.registerAccessory('homebridge-web-switch', 'WebSwitch', WebSwitch)
 }
 
-function WebValve (log, config) {
+function WebSwitch (log, config) {
   this.log = log
 
   this.name = config.name
@@ -20,8 +20,6 @@ function WebValve (log, config) {
   this.listener = config.listener || false
   this.port = config.port || 2000
   this.requestArray = ['state']
-
-  this.valveType = config.valveType || 0
 
   this.manufacturer = config.manufacturer || packageJson.author.name
   this.serial = config.serial || this.apiroute
@@ -60,10 +58,10 @@ function WebValve (log, config) {
     }.bind(this))
   }
 
-  this.service = new Service.Valve(this.name)
+  this.service = new Service.Switch(this.name)
 }
 
-WebValve.prototype = {
+WebSwitch.prototype = {
 
   identify: function (callback) {
     this.log('Identify requested!')
@@ -91,13 +89,12 @@ WebValve.prototype = {
     this._httpRequest(url, '', 'GET', function (error, response, responseBody) {
       if (error) {
         this.log.warn('Error getting status: %s', error.message)
-        this.service.getCharacteristic(Characteristic.Active).updateValue(new Error('Polling failed'))
+        this.service.getCharacteristic(Characteristic.On).updateValue(new Error('Polling failed'))
         callback(error)
       } else {
         this.log.debug('Device response: %s', responseBody)
         var json = JSON.parse(responseBody)
-        this.service.getCharacteristic(Characteristic.Active).updateValue(json.currentState)
-        this.service.getCharacteristic(Characteristic.InUse).updateValue(json.currentState)
+        this.service.getCharacteristic(Characteristic.On).updateValue(json.currentState)
         this.log('Updated state to: %s', json.currentState)
         callback()
       }
@@ -107,8 +104,7 @@ WebValve.prototype = {
   _httpHandler: function (characteristic, value) {
     switch (characteristic) {
       case 'state':
-        this.service.getCharacteristic(Characteristic.InUse).updateValue(value)
-        this.service.getCharacteristic(Characteristic.Active).updateValue(value)
+        this.service.getCharacteristic(Characteristic.On).updateValue(value)
         this.log('Updated %s to: %s', characteristic, value)
         break
       default:
@@ -116,7 +112,7 @@ WebValve.prototype = {
     }
   },
 
-  setActive: function (value, callback) {
+  setOn: function (value, callback) {
     var url = this.apiroute + '/setState/' + value
     this.log.debug('Setting state: %s', url)
 
@@ -126,7 +122,6 @@ WebValve.prototype = {
         callback(error)
       } else {
         this.log('Set state to %s', value)
-        this.service.getCharacteristic(Characteristic.InUse).updateValue(value)
         callback()
       }
     }.bind(this))
@@ -140,11 +135,9 @@ WebValve.prototype = {
       .setCharacteristic(Characteristic.SerialNumber, this.serial)
       .setCharacteristic(Characteristic.FirmwareRevision, this.firmware)
 
-    this.service.getCharacteristic(Characteristic.ValveType).updateValue(this.valveType)
-
     this.service
-      .getCharacteristic(Characteristic.Active)
-      .on('set', this.setActive.bind(this))
+      .getCharacteristic(Characteristic.On)
+      .on('set', this.setOn.bind(this))
 
     this._getStatus(function () {})
 
