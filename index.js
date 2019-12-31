@@ -113,6 +113,7 @@ WebSwitch.prototype = {
   },
 
   setOn: function (value, callback) {
+    value = value ? 1 : 0
     var url = this.apiroute + '/setState/' + value
     this.log.debug('Setting state: %s', url)
 
