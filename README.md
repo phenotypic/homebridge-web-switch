@@ -1,4 +1,4 @@
-# homebridge-web-switch _Under development_
+# homebridge-web-switch
 
 [![npm](https://img.shields.io/npm/v/homebridge-web-switch.svg)](https://www.npmjs.com/package/homebridge-web-switch) [![npm](https://img.shields.io/npm/dt/homebridge-web-switch.svg)](https://www.npmjs.com/package/homebridge-web-switch)
 
