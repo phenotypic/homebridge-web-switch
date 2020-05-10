@@ -95,7 +95,7 @@ WebSwitch.prototype = {
         this.log.debug('Device response: %s', responseBody)
         var json = JSON.parse(responseBody)
         this.service.getCharacteristic(Characteristic.On).updateValue(json.currentState)
-        this.log('Updated state to: %s', json.currentState)
+        this.log.debug('Updated state to: %s', json.currentState)
         callback()
       }
     }.bind(this))
