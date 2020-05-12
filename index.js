@@ -40,13 +40,12 @@ function WebSwitch (log, config) {
 
   if (this.listener) {
     this.server = http.createServer(function (request, response) {
-      var parts = request.url.split('/')
-      var partOne = parts[parts.length - 2]
-      var partTwo = parts[parts.length - 1]
-      if (parts.length === 3 && this.requestArray.includes(partOne)) {
-        this.log('Handling request: %s', request.url)
+      var baseURL = 'http://' + request.headers.host + '/'
+      var url = new URL(request.url, baseURL)
+      if (this.requestArray.includes(url.pathname.substr(1))) {
+        this.log.debug('Handling request')
         response.end('Handling request')
-        this._httpHandler(partOne, partTwo)
+        this._httpHandler(url.pathname.substr(1), url.searchParams.get('value'))
       } else {
         this.log.warn('Invalid request: %s', request.url)
         response.end('Invalid request')
@@ -114,7 +113,7 @@ WebSwitch.prototype = {
 
   setOn: function (value, callback) {
     value = value ? 1 : 0
-    var url = this.apiroute + '/setState/' + value
+    var url = this.apiroute + '/setState?value=' + value
     this.log.debug('Setting state: %s', url)
 
     this._httpRequest(url, '', this.http_method, function (error, response, responseBody) {
