@@ -1,6 +1,6 @@
 {
   "name": "homebridge-web-switch",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Homebridge plugin for a web-based switch",
   "main": "index.js",
   "dependencies": {
