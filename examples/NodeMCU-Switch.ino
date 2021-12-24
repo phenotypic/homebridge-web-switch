@@ -1,7 +1,7 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 
-// GitHub Page = https://github.com/Tommrodrigues/homebridge-web-switch
+// GitHub Page = https://github.com/phenotypic/homebridge-web-switch
 
 // Script Type = Switch relay
 
