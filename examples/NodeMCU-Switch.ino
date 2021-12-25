@@ -1,10 +1,6 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 
-// GitHub Page = https://github.com/phenotypic/homebridge-web-switch
-
-// Script Type = Switch relay
-
 // D7 = Relay
 
 /////////////////// CHANGE THESE VALUES //////////////////////
